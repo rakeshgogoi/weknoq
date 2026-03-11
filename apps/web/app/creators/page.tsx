@@ -25,7 +25,7 @@ export default function CreatorsPage() {
       <Navbar />
       <main className="min-h-screen pt-24 pb-24">
         {/* Header */}
-        <div className="px-12 pt-4 mb-14">
+        <div className="px-4 sm:px-8 md:px-12 pt-4 mb-14">
           <p className="label mb-3">Creators</p>
           <div className="flex items-end justify-between">
             <h1
@@ -44,7 +44,7 @@ export default function CreatorsPage() {
         </div>
 
         {/* Channels grid */}
-        <div className="px-12 grid grid-cols-3 gap-5 mb-16">
+        <div className="px-4 sm:px-8 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-16">
           {FEATURED_CHANNELS.map((c) => (
             <Link
               key={c.slug}
@@ -78,8 +78,8 @@ export default function CreatorsPage() {
         </div>
 
         {/* Are you a creator? */}
-        <div className="px-12">
-          <div className="bg-amber/[0.04] border border-amber/15 p-10 flex items-center justify-between">
+        <div className="px-4 sm:px-8 md:px-12">
+          <div className="bg-amber/[0.04] border border-amber/15 p-7 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
               <h2 className="font-display text-2xl font-bold mb-2">
                 Are you an educational creator?
@@ -89,16 +89,16 @@ export default function CreatorsPage() {
                 want to update your profile, or have questions — reach out.
               </p>
             </div>
-            <div className="flex gap-4 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto flex-shrink-0">
               <Link
                 href="/submit"
-                className="bg-amber text-ink px-7 py-3 text-sm font-medium hover:bg-amber-light transition-colors"
+                className="bg-amber text-ink px-7 py-3 text-sm font-medium hover:bg-amber-light transition-colors text-center"
               >
                 Submit Your Videos
               </Link>
               <Link
                 href="/takedown"
-                className="border border-paper/20 text-paper/60 px-7 py-3 text-sm hover:border-amber hover:text-amber transition-colors"
+                className="border border-paper/20 text-paper/60 px-7 py-3 text-sm hover:border-amber hover:text-amber transition-colors text-center"
               >
                 Request Takedown
               </Link>

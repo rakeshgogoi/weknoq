@@ -24,7 +24,7 @@ export function SearchSection() {
 
   return (
     <section
-      className="text-center px-12 py-20"
+      className="text-center px-4 sm:px-8 md:px-12 py-16 md:py-20"
       style={{
         background:
           "linear-gradient(to bottom, transparent, rgba(232,160,32,0.04), transparent)",
