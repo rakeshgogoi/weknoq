@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { VideoCard } from "@/components/video/VideoCard";
 import { Navbar } from "@/components/layout/Navbar";
@@ -18,7 +18,7 @@ const TOPICS = [
 
 const DIFFICULTIES = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -189,5 +189,22 @@ export default function SearchPage() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen pt-24 px-12">
+          <div className="max-w-3xl mx-auto mb-12 animate-pulse">
+            <div className="h-10 bg-white/10 rounded mb-8 w-2/3 mx-auto" />
+            <div className="h-14 bg-white/10" />
+          </div>
+        </div>
+      }
+    >
+      <SearchPageContent />
+    </Suspense>
   );
 }
