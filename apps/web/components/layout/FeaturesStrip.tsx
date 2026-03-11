@@ -23,18 +23,19 @@ const FEATURES = [
 
 export function FeaturesStrip() {
   return (
-    <div
-      className="grid mx-12 border-t border-b border-paper/[0.06]"
-      style={{ gridTemplateColumns: "repeat(4, 1fr)" }}
-    >
+    <div className="mx-4 sm:mx-8 md:mx-12 border-t border-b border-paper/[0.06] grid grid-cols-2 md:grid-cols-4">
       {FEATURES.map((f, i) => (
         <div
           key={f.name}
-          className={`px-9 py-10 ${i < FEATURES.length - 1 ? "border-r border-paper/[0.06]" : ""}`}
+          className={`px-5 sm:px-7 md:px-9 py-8 md:py-10 ${
+            i % 2 === 0 ? "border-r border-paper/[0.06]" : ""
+          } md:border-r md:last:border-r-0 border-paper/[0.06] ${
+            i < 2 ? "border-b md:border-b-0 border-paper/[0.06]" : ""
+          }`}
         >
-          <div className="text-[28px] mb-3.5">{f.icon}</div>
-          <p className="text-[15px] font-medium mb-2">{f.name}</p>
-          <p className="text-[13px] text-paper/40 leading-[1.6]">{f.desc}</p>
+          <div className="text-[24px] md:text-[28px] mb-3">{f.icon}</div>
+          <p className="text-[14px] md:text-[15px] font-medium mb-2">{f.name}</p>
+          <p className="text-[12px] md:text-[13px] text-paper/40 leading-[1.6]">{f.desc}</p>
         </div>
       ))}
     </div>

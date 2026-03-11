@@ -317,3 +317,19 @@ model SavedPath {
   @@id([userId, pathId])
   @@map("saved_paths")
 }
+
+// ─────────────────────────────────────────────
+// VIDEO SUBMISSIONS
+// ─────────────────────────────────────────────
+
+model VideoSubmission {
+  id        String   @id @default(cuid())
+  url       String
+  topic     String?
+  note      String?  @db.Text
+  email     String?
+  status    String   @default("pending") // pending | reviewed | accepted | rejected
+  createdAt DateTime @default(now())
+
+  @@map("video_submissions")
+}

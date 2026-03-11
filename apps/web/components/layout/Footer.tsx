@@ -31,11 +31,11 @@ const COLS = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-paper/[0.06] pt-12 pb-8 px-12">
+    <footer className="border-t border-paper/[0.06] pt-10 md:pt-12 pb-8 px-4 sm:px-8 md:px-12">
       {/* Top grid */}
-      <div className="grid gap-12 mb-12" style={{ gridTemplateColumns: "2fr 1fr 1fr 1fr" }}>
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-12">
         {/* Brand */}
-        <div className="footer-brand">
+        <div className="col-span-2 sm:col-span-2 md:col-span-1">
           <Link href="/" className="inline-flex items-center gap-2.5">
             <div className="w-[34px] h-[34px] rounded-full border-2 border-amber flex items-center justify-center">
               <div className="w-2.5 h-2.5 bg-amber rounded-full" />
@@ -73,7 +73,7 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-paper/[0.06] pt-6 flex items-center justify-between">
+      <div className="border-t border-paper/[0.06] pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <p className="text-[12px] text-paper/25">
           © 2025 Weknoq. All videos belong to their respective creators and platforms.
         </p>

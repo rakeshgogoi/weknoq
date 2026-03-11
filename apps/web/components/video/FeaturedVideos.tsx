@@ -127,8 +127,8 @@ export function FeaturedVideos({ videos }: { videos: VideoWithTopics[] }) {
   const remaining = rest.slice(0, 4);
 
   return (
-    <section className="px-12 py-24">
-      <div className="flex items-end justify-between mb-14">
+    <section className="px-4 sm:px-8 md:px-12 py-16 md:py-24">
+      <div className="flex items-end justify-between mb-10 md:mb-14">
         <div>
           <p className="label mb-3">Editor&apos;s Picks</p>
           <h2
@@ -148,13 +148,7 @@ export function FeaturedVideos({ videos }: { videos: VideoWithTopics[] }) {
         </Link>
       </div>
 
-      <div
-        className="grid gap-5"
-        style={{
-          gridTemplateColumns: "2fr 1fr 1fr",
-          gridTemplateRows: "auto auto",
-        }}
-      >
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-4 md:gap-5" style={{ gridTemplateRows: "auto auto" }}>
         <FeatCard video={large} large />
         {remaining.map((v) => (
           <FeatCard key={v.id} video={v} />

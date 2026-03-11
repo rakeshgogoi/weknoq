@@ -45,7 +45,7 @@ const HERO_VIDEOS = [
 
 export function HeroSection() {
   return (
-    <section className="min-h-screen grid grid-cols-2 items-center px-12 pt-24 pb-16 relative overflow-hidden">
+    <section className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center px-4 sm:px-8 md:px-12 pt-24 pb-16 relative overflow-hidden gap-10 lg:gap-0">
       {/* Background radial gradients */}
       <div className="absolute inset-0 pointer-events-none">
         <div
@@ -59,19 +59,19 @@ export function HeroSection() {
       </div>
 
       {/* Left column */}
-      <div className="relative z-10 pr-16">
+      <div className="relative z-10 lg:pr-16">
         {/* Eyebrow */}
-        <div className="inline-flex items-center gap-2.5 bg-amber/[0.12] border border-amber/30 px-3.5 py-1.5 mb-8">
+        <div className="inline-flex items-center gap-2.5 bg-amber/[0.12] border border-amber/30 px-3.5 py-1.5 mb-6 md:mb-8">
           <span className="text-amber animate-pulse-dot text-[8px]">◉</span>
-          <span className="text-[11px] tracking-[2px] uppercase text-amber font-medium">
+          <span className="text-[10px] sm:text-[11px] tracking-[1.5px] sm:tracking-[2px] uppercase text-amber font-medium">
             Knowledge from every corner of the internet
           </span>
         </div>
 
         {/* Title */}
         <h1
-          className="font-display font-black leading-[1.05] tracking-[-1px] mb-7"
-          style={{ fontSize: "clamp(48px, 5.5vw, 80px)" }}
+          className="font-display font-black leading-[1.05] tracking-[-1px] mb-5 md:mb-7"
+          style={{ fontSize: "clamp(38px, 5.5vw, 80px)" }}
         >
           The world&apos;s
           <br />
@@ -85,17 +85,17 @@ export function HeroSection() {
         </h1>
 
         {/* Subtitle */}
-        <p className="text-base leading-[1.7] text-paper/55 mb-11 max-w-[420px] font-light">
+        <p className="text-sm sm:text-base leading-[1.7] text-paper/55 mb-8 md:mb-11 max-w-[420px] font-light">
           Weknoq aggregates the best learning videos from YouTube, TED,
           universities, and more — organized into topics, paths, and curated
           journeys for curious minds.
         </p>
 
         {/* CTA buttons */}
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           <Link
             href="/explore"
-            className="group relative bg-amber text-ink px-9 py-4 text-sm font-medium tracking-[0.3px] hover:bg-amber-light transition-all duration-200 overflow-hidden"
+            className="group relative bg-amber text-ink px-7 sm:px-9 py-3.5 sm:py-4 text-sm font-medium tracking-[0.3px] hover:bg-amber-light transition-all duration-200 overflow-hidden"
           >
             Start Exploring
             <span className="ml-2.5 inline-block transition-transform duration-200 group-hover:translate-x-1">
@@ -104,24 +104,24 @@ export function HeroSection() {
           </Link>
           <Link
             href="/topics"
-            className="bg-transparent text-paper border border-paper/20 px-9 py-4 text-sm font-normal cursor-pointer transition-all duration-200 hover:border-amber hover:text-amber"
+            className="bg-transparent text-paper border border-paper/20 px-7 sm:px-9 py-3.5 sm:py-4 text-sm font-normal cursor-pointer transition-all duration-200 hover:border-amber hover:text-amber"
           >
             Browse Topics
           </Link>
         </div>
 
         {/* Stats */}
-        <div className="flex gap-9 mt-14 pt-9 border-t border-white/10">
+        <div className="flex gap-6 sm:gap-9 mt-10 md:mt-14 pt-7 md:pt-9 border-t border-white/10">
           {[
             { num: "120K+", label: "Videos Curated" },
             { num: "48",    label: "Topic Categories" },
             { num: "12",    label: "Platforms" },
           ].map(({ num, label }) => (
             <div key={label}>
-              <span className="font-display text-[28px] font-bold text-amber block">
+              <span className="font-display text-[24px] sm:text-[28px] font-bold text-amber block">
                 {num}
               </span>
-              <span className="text-[11px] tracking-[1.5px] uppercase text-paper/40 mt-0.5 block">
+              <span className="text-[10px] sm:text-[11px] tracking-[1.5px] uppercase text-paper/40 mt-0.5 block">
                 {label}
               </span>
             </div>
@@ -129,15 +129,15 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Right column — video preview cards */}
-      <div className="relative z-10 flex flex-col gap-4">
+      {/* Right column — video preview cards (hidden on small screens) */}
+      <div className="relative z-10 flex flex-col gap-3 sm:gap-4 lg:block hidden sm:flex">
         {HERO_VIDEOS.map((v) => (
           <a
             key={v.title}
             href={(v as any).href ?? "/explore"}
             target="_blank"
             rel="noopener noreferrer"
-            className={`group relative flex gap-4 items-start p-5 cursor-pointer transition-all duration-300
+            className={`group relative flex gap-4 items-start p-4 sm:p-5 cursor-pointer transition-all duration-300
               border overflow-hidden
               ${v.featured
                 ? "border-amber/30 bg-amber/[0.05]"
@@ -153,7 +153,7 @@ export function HeroSection() {
             )}
 
             {/* Thumbnail */}
-            <div className="relative w-22 h-14 flex-shrink-0 overflow-hidden" style={{ width: 88, height: 58 }}>
+            <div className="relative w-[88px] h-[58px] flex-shrink-0 overflow-hidden">
               <div
                 className="w-full h-full flex items-center justify-center text-xl"
                 style={{ background: v.gradient }}
@@ -194,6 +194,32 @@ export function HeroSection() {
                   </span>
                 ))}
               </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* Mobile: show video cards in a scrollable strip */}
+      <div className="lg:hidden flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:-mx-8 sm:px-8 snap-x snap-mandatory">
+        {HERO_VIDEOS.map((v) => (
+          <a
+            key={v.title + "-mobile"}
+            href={v.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex-shrink-0 w-[280px] snap-start flex gap-3 items-start p-4 border ${
+              v.featured ? "border-amber/30 bg-amber/[0.05]" : "border-paper/[0.08] bg-paper/[0.03]"
+            }`}
+          >
+            <div
+              className="w-[72px] h-[48px] flex-shrink-0 flex items-center justify-center text-lg"
+              style={{ background: v.gradient }}
+            >
+              {v.emoji}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] tracking-[1px] uppercase text-amber mb-1">{v.source}</p>
+              <p className="text-[12px] font-medium text-paper leading-[1.35] line-clamp-2">{v.title}</p>
             </div>
           </a>
         ))}
