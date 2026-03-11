@@ -70,7 +70,10 @@ export async function GET(req: NextRequest) {
     ]);
 
     const result = {
-      videos,
+      videos: videos.map((v) => ({
+        ...v,
+        viewCount: v.viewCount !== null ? Number(v.viewCount) : null,
+      })),
       pagination: {
         page,
         pageSize: PAGE_SIZE,
