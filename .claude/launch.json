@@ -4,7 +4,7 @@
     {
       "name": "Web (Next.js)",
       "runtimeExecutable": "/bin/sh",
-      "runtimeArgs": ["-c", "export PATH=/Users/rakeshgogoi/.nvm/versions/node/v20.20.1/bin:$PATH && cd /Users/rakeshgogoi/Downloads/files/weknoq/.claude/worktrees/silly-goldwasser/apps/web && node /Users/rakeshgogoi/Downloads/files/weknoq/node_modules/.bin/next dev"],
+      "runtimeArgs": ["-c", "export PATH=/Users/rakeshgogoi/.nvm/versions/node/v20.20.1/bin:$PATH && cd /Users/rakeshgogoi/Downloads/files/weknoq/.claude/worktrees/silly-goldwasser/apps/web && node /Users/rakeshgogoi/Downloads/files/weknoq/.claude/worktrees/silly-goldwasser/node_modules/.bin/next dev"],
       "port": 3000,
       "autoPort": true
     },
