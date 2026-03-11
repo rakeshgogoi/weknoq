@@ -1,0 +1,33 @@
+{
+  "name": "weknoq",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@10.0.0",
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "predev": "npm --workspace packages/db run db:generate",
+    "dev": "turbo dev",
+    "prebuild": "npm --workspace packages/db run db:generate",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "db:push": "cd packages/db && npx prisma db push",
+    "db:migrate": "cd packages/db && npx prisma migrate dev",
+    "db:studio": "cd packages/db && npx prisma studio",
+    "db:generate": "cd packages/db && npx prisma generate",
+    "db:seed": "cd packages/db && npm run db:seed",
+    "postinstall": "npm --workspace packages/db run db:generate"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0",
+    "turbo": "^2.0.0"
+  },
+  "dependencies": {}
+}

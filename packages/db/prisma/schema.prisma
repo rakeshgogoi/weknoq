@@ -1,0 +1,319 @@
+// weknoq/packages/db/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// USERS & AUTH
+// ─────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // NextAuth relations
+  accounts      Account[]
+  sessions      Session[]
+
+  // App relations
+  bookmarks     Bookmark[]
+  progress      VideoProgress[]
+  enrollments   PathEnrollment[]
+  savedPaths    SavedPath[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─────────────────────────────────────────────
+// TOPICS & TAGS
+// ─────────────────────────────────────────────
+
+model Topic {
+  id          String   @id @default(cuid())
+  name        String   @unique   // e.g. "Programming"
+  slug        String   @unique   // e.g. "programming"
+  description String?
+  emoji       String?            // e.g. "💻"
+  color       String?            // hex color for UI
+  videoCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  subtopics   Subtopic[]
+  videos      VideoTopic[]
+  paths       LearningPath[]
+
+  @@map("topics")
+}
+
+model Subtopic {
+  id        String   @id @default(cuid())
+  name      String                         // e.g. "Machine Learning"
+  slug      String                         // e.g. "machine-learning"
+  topicId   String
+  createdAt DateTime @default(now())
+
+  topic  Topic        @relation(fields: [topicId], references: [id])
+  videos VideoSubtopic[]
+
+  @@unique([slug, topicId])
+  @@map("subtopics")
+}
+
+model Tag {
+  id     String @id @default(cuid())
+  name   String @unique  // e.g. "python", "beginner", "mit"
+
+  videos VideoTag[]
+
+  @@map("tags")
+}
+
+// ─────────────────────────────────────────────
+// VIDEOS
+// ─────────────────────────────────────────────
+
+enum Platform {
+  YOUTUBE
+  VIMEO
+  TED
+  MIT_OCW
+  KHAN_ACADEMY
+  COURSERA
+  EDX
+  OTHER
+}
+
+enum DifficultyLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model Video {
+  id              String          @id @default(cuid())
+  // Source info
+  platformId      String          // YouTube video ID, Vimeo ID, etc.
+  platform        Platform
+  sourceUrl       String          // Original URL
+  embedUrl        String?         // Embed-safe URL
+  // Content
+  title           String
+  description     String?         @db.Text
+  thumbnailUrl    String?
+  channelName     String?
+  channelId       String?
+  // AI / rule-based enrichment
+  aiSummary       String?         @db.Text   // "What you'll learn" blurb
+  difficulty      DifficultyLevel?
+  language        String?         @default("en")
+  // Metadata
+  durationSeconds Int?
+  viewCount       BigInt?
+  likeCount       BigInt?
+  publishedAt     DateTime?
+  // Internal
+  isActive        Boolean  @default(true)
+  isFeatured      Boolean  @default(false)
+  ingestedAt      DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  topics      VideoTopic[]
+  subtopics   VideoSubtopic[]
+  tags        VideoTag[]
+  bookmarks   Bookmark[]
+  progress    VideoProgress[]
+  pathVideos  PathVideo[]
+
+  @@unique([platformId, platform])
+  @@index([platform])
+  @@index([difficulty])
+  @@index([language])
+  @@index([isFeatured])
+  @@map("videos")
+}
+
+// Join tables
+model VideoTopic {
+  videoId String
+  topicId String
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([videoId, topicId])
+  @@map("video_topics")
+}
+
+model VideoSubtopic {
+  videoId    String
+  subtopicId String
+
+  video    Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  subtopic Subtopic @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+
+  @@id([videoId, subtopicId])
+  @@map("video_subtopics")
+}
+
+model VideoTag {
+  videoId String
+  tagId   String
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([videoId, tagId])
+  @@map("video_tags")
+}
+
+// ─────────────────────────────────────────────
+// LEARNING PATHS
+// ─────────────────────────────────────────────
+
+model LearningPath {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?  @db.Text
+  emoji       String?
+  topicId     String?
+  // Metadata
+  totalVideos Int      @default(0)
+  totalSeconds Int     @default(0)   // sum of video durations
+  difficulty  DifficultyLevel?
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  topic       Topic?          @relation(fields: [topicId], references: [id])
+  videos      PathVideo[]
+  enrollments PathEnrollment[]
+  savedBy     SavedPath[]
+
+  @@map("learning_paths")
+}
+
+model PathVideo {
+  pathId    String
+  videoId   String
+  order     Int         // position in the path (1, 2, 3…)
+  note      String?     // curator's note for this step
+
+  path  LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  video Video        @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@id([pathId, videoId])
+  @@map("path_videos")
+}
+
+// ─────────────────────────────────────────────
+// USER PROGRESS & ENGAGEMENT
+// ─────────────────────────────────────────────
+
+model VideoProgress {
+  id              String   @id @default(cuid())
+  userId          String
+  videoId         String
+  watchedSeconds  Int      @default(0)
+  completed       Boolean  @default(false)
+  lastWatchedAt   DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+  @@map("video_progress")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  videoId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+  @@map("bookmarks")
+}
+
+model PathEnrollment {
+  id          String    @id @default(cuid())
+  userId      String
+  pathId      String
+  enrolledAt  DateTime  @default(now())
+  completedAt DateTime?
+  // which video they're currently on
+  currentVideoOrder Int @default(1)
+
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  path LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, pathId])
+  @@map("path_enrollments")
+}
+
+model SavedPath {
+  userId    String
+  pathId    String
+  savedAt   DateTime @default(now())
+
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  path LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+
+  @@id([userId, pathId])
+  @@map("saved_paths")
+}

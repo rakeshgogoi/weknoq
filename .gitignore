@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.env
+.env.local
+*.log
+dist/
+build/
+.turbo/
+__pycache__/
+*.pyc
+.venv/
+nginx/ssl/
+postgres_data/
+redis_data/
