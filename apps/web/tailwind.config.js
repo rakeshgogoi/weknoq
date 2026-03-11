@@ -25,10 +25,14 @@ module.exports = {
         mono:    ["DM Mono", "monospace"],
       },
       animation: {
-        "spin-slow":  "spin 8s linear infinite",
-        "marquee":    "marquee 25s linear infinite",
-        "fade-up":    "fadeUp 0.5s ease both",
-        "pulse-slow": "pulse 3s ease-in-out infinite",
+        "spin-slow":    "spin 8s linear infinite",
+        "marquee":      "marquee 25s linear infinite",
+        "fade-up":      "fadeUp 0.5s ease both",
+        "fade-slide-1": "fadeSlideIn 0.6s ease 0.1s both",
+        "fade-slide-2": "fadeSlideIn 0.6s ease 0.2s both",
+        "fade-slide-3": "fadeSlideIn 0.6s ease 0.3s both",
+        "pulse-slow":   "pulse 3s ease-in-out infinite",
+        "pulse-dot":    "pulseDot 2s ease-in-out infinite",
       },
       keyframes: {
         marquee: {
@@ -38,6 +42,14 @@ module.exports = {
         fadeUp: {
           from: { opacity: "0", transform: "translateY(16px)" },
           to:   { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeSlideIn: {
+          from: { opacity: "0", transform: "translateY(20px)" },
+          to:   { opacity: "1", transform: "translateY(0)" },
+        },
+        pulseDot: {
+          "0%, 100%": { opacity: "1" },
+          "50%":      { opacity: "0.3" },
         },
       },
     },
