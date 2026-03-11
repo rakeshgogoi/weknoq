@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add apps/web/app/globals.css apps/web/app/page.tsx apps/web/components/layout/Footer.tsx apps/web/components/layout/HeroSection.tsx apps/web/components/layout/LearningPaths.tsx apps/web/components/layout/Marquee.tsx apps/web/components/layout/Navbar.tsx apps/web/components/layout/TopicsGrid.tsx apps/web/components/search/SearchSection.tsx apps/web/components/video/FeaturedVideos.tsx apps/web/tailwind.config.js apps/web/components/layout/CTASection.tsx apps/web/components/layout/FeaturesStrip.tsx apps/web/components/layout/HowItWorks.tsx)",
+      "Bash(git commit:*)",
+      "Bash(git push -u origin claude/gracious-noether)",
+      "Bash(gh pr:*)",
+      "Bash(brew install gh)",
+      "Bash(grep -A2 '\"\"brand\"\"' /Users/rakeshgogoi/Downloads/files/weknoq/apps/web/components/layout/Navbar.tsx)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Read(//Users/rakeshgogoi/Downloads/files/weknoq/apps/web/node_modules/.bin/**)",
+      "Read(//Users/rakeshgogoi/Downloads/files/weknoq/node_modules/next/dist/bin/**)",
+      "Bash(NEXT_TELEMETRY_DISABLED=1 /Users/rakeshgogoi/.nvm/versions/node/v20.20.1/bin/node /Users/rakeshgogoi/Downloads/files/weknoq/node_modules/.bin/next dev --help)",
+      "Bash(git add apps/web/postcss.config.js .claude/launch.json)",
+      "Bash(git push)",
+      "Bash(lsof -i :3000)",
+      "Bash(lsof -i :54439)",
+      "Bash(git add apps/web/components/layout/Navbar.tsx)"
+    ]
+  }
+}
