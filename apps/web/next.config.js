@@ -13,6 +13,8 @@ const nextConfig = {
     // allow importing from the shared packages
     externalDir: true,
   },
+  // Prevent Turbopack from bundling Prisma client (fixes "unexpected export *" error)
+  serverExternalPackages: ["@prisma/client", "@prisma/instrumentation"],
 };
 
 module.exports = nextConfig;
