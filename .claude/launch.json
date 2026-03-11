@@ -1,0 +1,24 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Web (Next.js)",
+      "runtimeExecutable": "/bin/sh",
+      "runtimeArgs": ["-c", "export PATH=/Users/rakeshgogoi/.nvm/versions/node/v20.20.1/bin:$PATH && cd /Users/rakeshgogoi/Downloads/files/weknoq/.claude/worktrees/gracious-noether/apps/web && node /Users/rakeshgogoi/Downloads/files/weknoq/node_modules/.bin/next dev"],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "All (Turbo)",
+      "runtimeExecutable": "/Users/rakeshgogoi/.nvm/versions/node/v20.20.1/bin/npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "AI Tagger (Python)",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"],
+      "port": 8000
+    }
+  ]
+}
