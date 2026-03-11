@@ -62,30 +62,30 @@ export default async function TopicsPage() {
       <Navbar />
       <main className="min-h-screen pt-24 pb-24">
         {/* Header */}
-        <div className="px-12 pt-4 mb-14">
+        <div className="px-4 sm:px-8 md:px-12 pt-4 mb-10 md:mb-14">
           <p className="label mb-3">Browse by Topic</p>
           <div className="flex items-end justify-between">
             <h1
               className="font-display font-bold leading-[1.05]"
-              style={{ fontSize: "clamp(36px, 4vw, 56px)" }}
+              style={{ fontSize: "clamp(32px, 4vw, 56px)" }}
             >
               Every field of
               <br />
               <em className="text-amber italic">human knowledge.</em>
             </h1>
-            <p className="text-[13px] text-paper/35 mb-1">
+            <p className="text-[13px] text-paper/35 mb-1 hidden sm:block">
               {topics.length} topic categories
             </p>
           </div>
 
-          <p className="mt-5 text-[15px] text-paper/45 leading-relaxed max-w-2xl">
+          <p className="mt-5 text-[14px] sm:text-[15px] text-paper/45 leading-relaxed max-w-2xl">
             Weknoq aggregates the best educational videos from across the internet,
             organized into topics so you can go deep on anything that interests you.
           </p>
         </div>
 
         {/* Topics grid */}
-        <div className="px-12 grid grid-cols-4 gap-5">
+        <div className="px-4 sm:px-8 md:px-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
           {topics.map((t) => (
             <Link
               key={t.slug}
@@ -136,8 +136,8 @@ export default async function TopicsPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="px-12 mt-20 pt-14 border-t border-paper/[0.06]">
-          <div className="flex items-center justify-between">
+        <div className="px-4 sm:px-8 md:px-12 mt-14 md:mt-20 pt-10 md:pt-14 border-t border-paper/[0.06]">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div>
               <p className="font-display text-xl font-bold mb-2">
                 Don&apos;t see your topic?
@@ -146,7 +146,7 @@ export default async function TopicsPage() {
                 Submit a video or request a new topic category.
               </p>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-3 sm:gap-4 flex-wrap">
               <Link
                 href="/submit"
                 className="bg-amber text-ink px-7 py-3 text-sm font-medium hover:bg-amber-light transition-colors"

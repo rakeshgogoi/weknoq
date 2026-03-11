@@ -41,8 +41,8 @@ export function TopicsGrid({
     : FALLBACK_TOPICS;
 
   return (
-    <section className="px-12 py-24 bg-paper/[0.015]">
-      <div className="flex items-end justify-between mb-14">
+    <section className="px-4 sm:px-8 md:px-12 py-16 md:py-24 bg-paper/[0.015]">
+      <div className="flex items-end justify-between mb-10 md:mb-14">
         <div>
           <p className="label mb-3">Browse by Topic</p>
           <h2
@@ -62,7 +62,7 @@ export function TopicsGrid({
         </Link>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         {displayTopics.map((t) => (
           <Link
             key={t.slug}

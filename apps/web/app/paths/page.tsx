@@ -93,7 +93,7 @@ export default async function PathsPage() {
       <Navbar />
       <main className="min-h-screen pt-24 pb-24">
         {/* Header */}
-        <div className="px-12 pt-4 mb-14">
+        <div className="px-4 sm:px-8 md:px-12 pt-4 mb-10 md:mb-14">
           <p className="label mb-3">Learning Paths</p>
           <div className="flex items-end justify-between">
             <h1
@@ -115,7 +115,7 @@ export default async function PathsPage() {
         </div>
 
         {/* Paths grid */}
-        <div className="px-12 grid grid-cols-3 gap-6">
+        <div className="px-4 sm:px-8 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {paths.map((p: any) => {
             const diff = p.difficulty as keyof typeof DIFFICULTY_STYLES | null;
             const style = diff ? DIFFICULTY_STYLES[diff] : null;
@@ -186,8 +186,8 @@ export default async function PathsPage() {
         </div>
 
         {/* Suggest a path */}
-        <div className="px-12 mt-16 pt-12 border-t border-paper/[0.06]">
-          <div className="bg-amber/[0.04] border border-amber/15 p-8 flex items-center justify-between">
+        <div className="px-4 sm:px-8 md:px-12 mt-12 md:mt-16 pt-10 md:pt-12 border-t border-paper/[0.06]">
+          <div className="bg-amber/[0.04] border border-amber/15 p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
             <div>
               <p className="font-display text-xl font-bold mb-1">
                 Want a path on something specific?

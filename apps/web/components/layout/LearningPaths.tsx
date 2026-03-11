@@ -15,8 +15,8 @@ export function LearningPaths({ paths }: { paths: PathWithTopic[] }) {
   const displayPaths = paths?.length ? paths : FALLBACK_PATHS;
 
   return (
-    <section className="px-12 py-24">
-      <div className="flex items-end justify-between mb-14">
+    <section className="px-4 sm:px-8 md:px-12 py-16 md:py-24">
+      <div className="flex items-end justify-between mb-10 md:mb-14">
         <div>
           <p className="label mb-3">Learning Paths</p>
           <h2
@@ -36,7 +36,7 @@ export function LearningPaths({ paths }: { paths: PathWithTopic[] }) {
         </Link>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {displayPaths.map((p) => (
           <Link
             key={p.id}
