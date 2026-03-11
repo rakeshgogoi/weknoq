@@ -4,36 +4,39 @@ const HERO_VIDEOS = [
   {
     gradient: "linear-gradient(135deg,#1a2744,#2a4a7f)",
     emoji: "💻",
-    source: "YouTube · MIT OCW",
-    title: "Introduction to Algorithms — Lecture 1",
+    source: "YouTube · freeCodeCamp",
+    title: "Learn Python - Full Course for Beginners",
+    href: "https://www.youtube.com/watch?v=rfscVS0vtbw",
     tags: [
       { label: "Featured", amber: true },
       { label: "Beginner", amber: false },
-      { label: "1h 22m", amber: false },
+      { label: "4h 22m", amber: false },
     ],
     featured: true,
     animClass: "animate-fade-slide-1",
   },
   {
     gradient: "linear-gradient(135deg,#2b1a0d,#7a4010)",
-    emoji: "🧠",
-    source: "TED · Philosophy",
-    title: "The philosophy of time management",
+    emoji: "🎙️",
+    source: "YouTube · TED",
+    title: "How great leaders inspire action — Simon Sinek",
+    href: "https://www.youtube.com/watch?v=qp0HIF3SfI4",
     tags: [
-      { label: "Intermediate", amber: false },
+      { label: "Beginner", amber: false },
       { label: "18m", amber: false },
     ],
     featured: false,
     animClass: "animate-fade-slide-2",
   },
   {
-    gradient: "linear-gradient(135deg,#0d2b1a,#1a5c35)",
-    emoji: "🔬",
-    source: "Vimeo · Science",
-    title: "How CRISPR is changing medicine forever",
+    gradient: "linear-gradient(135deg,#0d0d2b,#1a1a7a)",
+    emoji: "∑",
+    source: "YouTube · 3Blue1Brown",
+    title: "The Essence of Calculus, Chapter 1",
+    href: "https://www.youtube.com/watch?v=WUvTyaaNkzM",
     tags: [
-      { label: "Advanced", amber: false },
-      { label: "45m", amber: false },
+      { label: "Intermediate", amber: false },
+      { label: "17m", amber: false },
     ],
     featured: false,
     animClass: "animate-fade-slide-3",
@@ -129,8 +132,11 @@ export function HeroSection() {
       {/* Right column — video preview cards */}
       <div className="relative z-10 flex flex-col gap-4">
         {HERO_VIDEOS.map((v) => (
-          <div
+          <a
             key={v.title}
+            href={(v as any).href ?? "/explore"}
+            target="_blank"
+            rel="noopener noreferrer"
             className={`group relative flex gap-4 items-start p-5 cursor-pointer transition-all duration-300
               border overflow-hidden
               ${v.featured
@@ -189,7 +195,7 @@ export function HeroSection() {
                 ))}
               </div>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </section>
