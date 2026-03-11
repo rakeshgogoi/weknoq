@@ -52,7 +52,7 @@ export function Navbar() {
       </ul>
 
       {/* Auth */}
-      <div>
+      <div suppressHydrationWarning>
         {session ? (
           <div className="flex items-center gap-4">
             <Link
