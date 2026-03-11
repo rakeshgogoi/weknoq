@@ -29,6 +29,7 @@ function SearchPageContent() {
   const [loading, setLoading]     = useState(false);
   const [page, setPage]           = useState(1);
   const [totalPages, setTotal]    = useState(0);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const search = useCallback(async (q: string, t: string, d: string, p: number) => {
     setLoading(true);
@@ -62,13 +63,75 @@ function SearchPageContent() {
     return () => clearTimeout(timer);
   }, [query, topic, difficulty, page]);
 
+  const activeFilterCount = (topic ? 1 : 0) + (difficulty ? 1 : 0);
+
+  const FiltersContent = () => (
+    <>
+      {/* Topic filter */}
+      <div className="mb-8">
+        <p className="label mb-4">Topic</p>
+        <div className="flex flex-col gap-1">
+          <button
+            onClick={() => { setTopic(""); setPage(1); setFiltersOpen(false); }}
+            className={`text-left text-[13px] py-2 px-3 transition-colors ${
+              !topic ? "bg-amber/10 text-amber" : "text-paper/50 hover:text-paper/80"
+            }`}
+          >
+            All Topics
+          </button>
+          {TOPICS.map((t) => (
+            <button
+              key={t.slug}
+              onClick={() => { setTopic(t.slug); setPage(1); setFiltersOpen(false); }}
+              className={`text-left text-[13px] py-2 px-3 transition-colors ${
+                topic === t.slug
+                  ? "bg-amber/10 text-amber"
+                  : "text-paper/50 hover:text-paper/80"
+              }`}
+            >
+              {t.emoji} {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Difficulty filter */}
+      <div>
+        <p className="label mb-4">Difficulty</p>
+        <div className="flex flex-col gap-1">
+          <button
+            onClick={() => { setDiff(""); setPage(1); setFiltersOpen(false); }}
+            className={`text-left text-[13px] py-2 px-3 transition-colors ${
+              !difficulty ? "bg-amber/10 text-amber" : "text-paper/50 hover:text-paper/80"
+            }`}
+          >
+            All Levels
+          </button>
+          {DIFFICULTIES.map((d) => (
+            <button
+              key={d}
+              onClick={() => { setDiff(d); setPage(1); setFiltersOpen(false); }}
+              className={`text-left text-[13px] py-2 px-3 capitalize transition-colors ${
+                difficulty === d
+                  ? "bg-amber/10 text-amber"
+                  : "text-paper/50 hover:text-paper/80"
+              }`}
+            >
+              {d.toLowerCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-24 px-12 pb-24">
+      <main className="min-h-screen pt-24 px-4 sm:px-8 md:px-12 pb-24">
         {/* Search bar */}
-        <div className="max-w-3xl mx-auto mb-12">
-          <h1 className="font-display text-4xl font-bold mb-8 text-center">
+        <div className="max-w-3xl mx-auto mb-10 md:mb-12">
+          <h1 className="font-display text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-center">
             Search <span className="italic text-amber">Knowledge</span>
           </h1>
           <div className="flex border border-white/15 focus-within:border-amber/60 transition-colors">
@@ -77,78 +140,50 @@ function SearchPageContent() {
               value={query}
               onChange={(e) => { setQuery(e.target.value); setPage(1); }}
               placeholder="Search any topic, channel, or keyword…"
-              className="flex-1 bg-transparent px-6 py-4 text-paper placeholder-paper/30 focus:outline-none text-[15px]"
+              className="flex-1 bg-transparent px-4 sm:px-6 py-4 text-paper placeholder-paper/30 focus:outline-none text-[15px] min-w-0"
             />
-            <button className="bg-amber text-ink px-8 font-medium hover:bg-amber-light transition-colors">
+            <button className="bg-amber text-ink px-5 sm:px-8 font-medium hover:bg-amber-light transition-colors whitespace-nowrap text-sm">
               Search
             </button>
           </div>
         </div>
 
-        <div className="flex gap-10">
-          {/* Filters sidebar */}
-          <aside className="w-52 flex-shrink-0">
-            {/* Topic filter */}
-            <div className="mb-8">
-              <p className="label mb-4">Topic</p>
-              <div className="flex flex-col gap-1">
-                <button
-                  onClick={() => { setTopic(""); setPage(1); }}
-                  className={`text-left text-[13px] py-2 px-3 transition-colors ${
-                    !topic ? "bg-amber/10 text-amber" : "text-paper/50 hover:text-paper/80"
-                  }`}
-                >
-                  All Topics
-                </button>
-                {TOPICS.map((t) => (
-                  <button
-                    key={t.slug}
-                    onClick={() => { setTopic(t.slug); setPage(1); }}
-                    className={`text-left text-[13px] py-2 px-3 transition-colors ${
-                      topic === t.slug
-                        ? "bg-amber/10 text-amber"
-                        : "text-paper/50 hover:text-paper/80"
-                    }`}
-                  >
-                    {t.emoji} {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+        {/* Mobile filter toggle */}
+        <div className="md:hidden mb-4">
+          <button
+            onClick={() => setFiltersOpen(!filtersOpen)}
+            className="flex items-center gap-2 border border-white/15 px-4 py-2.5 text-[13px] text-paper/70 hover:border-amber/40 hover:text-amber transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 3h12M3 7h8M5 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="bg-amber text-ink text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+            <span className="ml-auto text-paper/30">{filtersOpen ? "▲" : "▼"}</span>
+          </button>
 
-            {/* Difficulty filter */}
-            <div>
-              <p className="label mb-4">Difficulty</p>
-              <div className="flex flex-col gap-1">
-                <button
-                  onClick={() => { setDiff(""); setPage(1); }}
-                  className={`text-left text-[13px] py-2 px-3 transition-colors ${
-                    !difficulty ? "bg-amber/10 text-amber" : "text-paper/50 hover:text-paper/80"
-                  }`}
-                >
-                  All Levels
-                </button>
-                {DIFFICULTIES.map((d) => (
-                  <button
-                    key={d}
-                    onClick={() => { setDiff(d); setPage(1); }}
-                    className={`text-left text-[13px] py-2 px-3 capitalize transition-colors ${
-                      difficulty === d
-                        ? "bg-amber/10 text-amber"
-                        : "text-paper/50 hover:text-paper/80"
-                    }`}
-                  >
-                    {d.toLowerCase()}
-                  </button>
-                ))}
-              </div>
+          {/* Collapsible filter panel on mobile */}
+          {filtersOpen && (
+            <div className="border border-white/10 border-t-0 p-4 bg-paper/[0.02]">
+              <FiltersContent />
             </div>
+          )}
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+          {/* Filters sidebar — desktop only */}
+          <aside className="hidden md:block w-52 flex-shrink-0">
+            <FiltersContent />
           </aside>
 
           {/* Results */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="aspect-video bg-white/5 animate-pulse" />
                 ))}
@@ -160,7 +195,7 @@ function SearchPageContent() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {videos.map((video) => (
                     <VideoCard key={video.id} video={video} />
                   ))}
@@ -196,7 +231,7 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen pt-24 px-12">
+        <div className="min-h-screen pt-24 px-4 sm:px-8 md:px-12">
           <div className="max-w-3xl mx-auto mb-12 animate-pulse">
             <div className="h-10 bg-white/10 rounded mb-8 w-2/3 mx-auto" />
             <div className="h-14 bg-white/10" />
