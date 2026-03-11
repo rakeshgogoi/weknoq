@@ -106,7 +106,7 @@ export default async function VideoPage({
       <Navbar />
       <main className="min-h-screen pt-24 pb-24">
         {/* Breadcrumb */}
-        <div className="px-12 mb-6">
+        <div className="px-4 sm:px-8 md:px-12 mb-6">
           <div className="flex items-center gap-2 text-[12px] text-paper/30 tracking-wide">
             <Link href="/" className="hover:text-amber transition-colors">
               Home
@@ -129,9 +129,9 @@ export default async function VideoPage({
           </div>
         </div>
 
-        <div className="px-12 grid grid-cols-[1fr_340px] gap-10">
+        <div className="px-4 sm:px-8 md:px-12 flex flex-col lg:flex-row gap-8 lg:gap-10">
           {/* Left: Player + Info */}
-          <div>
+          <div className="flex-1 min-w-0">
             {/* Video Player */}
             <div className="relative w-full bg-black mb-6">
               {embedUrl ? (
@@ -208,7 +208,7 @@ export default async function VideoPage({
             </div>
 
             {/* Channel + Topics row */}
-            <div className="flex items-center justify-between py-4 border-y border-paper/[0.07] mb-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 py-4 border-y border-paper/[0.07] mb-5">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-amber/10 border border-amber/20 rounded-full flex items-center justify-center text-amber text-sm font-bold">
                   {video.channelName?.[0] ?? "?"}
@@ -272,9 +272,9 @@ export default async function VideoPage({
 
           {/* Right: Related Videos */}
           {relatedVideos.length > 0 && (
-            <aside>
+            <aside className="w-full lg:w-[340px] lg:flex-shrink-0">
               <p className="label mb-5">Related Videos</p>
-              <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
                 {relatedVideos.map((v) => (
                   <VideoCard key={v.id} video={v} size="sm" />
                 ))}
