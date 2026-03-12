@@ -7,6 +7,7 @@ import { prisma } from "@weknoq/db";
 import { searchYouTube, getVideoDetails } from "@/lib/youtube";
 import { tagVideo, generateSummary } from "@/lib/tagger";
 import { cacheGet, cacheSet } from "@/lib/cache";
+import { toSlug } from "@/lib/slug";
 import { z } from "zod";
 
 const IngestSchema = z.object({
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
         create: {
           platformId: video.platformId,
           platform: "YOUTUBE",
+          slug: toSlug(video.title),
           title: video.title,
           description: video.description,
           thumbnailUrl: video.thumbnailUrl,
