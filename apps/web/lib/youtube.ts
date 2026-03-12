@@ -120,6 +120,70 @@ export async function getVideoDetails(
 }
 
 // ─────────────────────────────────────────────
+// Channel data (for creator profiles)
+// channels.list = 1 unit per call
+// ─────────────────────────────────────────────
+
+export interface YouTubeChannelData {
+  channelId: string;
+  title: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  country: string | null;
+  subscriberCount: number | null;
+  totalViewCount: bigint | null;
+}
+
+export async function fetchChannelData(
+  channelIds: string[]
+): Promise<Map<string, YouTubeChannelData>> {
+  const result = new Map<string, YouTubeChannelData>();
+  if (channelIds.length === 0) return result;
+
+  // YouTube allows up to 50 IDs per request
+  const batches: string[][] = [];
+  for (let i = 0; i < channelIds.length; i += 50) {
+    batches.push(channelIds.slice(i, i + 50));
+  }
+
+  for (const batch of batches) {
+    const params = new URLSearchParams({
+      part: "snippet,statistics",
+      id: batch.join(","),
+      key: API_KEY,
+    });
+
+    const res = await fetch(`${BASE}/channels?${params}`, {
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) continue; // skip failed batches, don't abort ingest
+
+    const data = await res.json();
+    for (const item of data.items ?? []) {
+      result.set(item.id, {
+        channelId: item.id,
+        title: item.snippet.title,
+        description: item.snippet.description ?? null,
+        thumbnailUrl:
+          item.snippet.thumbnails?.high?.url ??
+          item.snippet.thumbnails?.default?.url ??
+          null,
+        country: item.snippet.country ?? null,
+        subscriberCount: item.statistics?.subscriberCount
+          ? parseInt(item.statistics.subscriberCount)
+          : null,
+        totalViewCount: item.statistics?.viewCount
+          ? BigInt(item.statistics.viewCount)
+          : null,
+      });
+    }
+  }
+
+  return result;
+}
+
+// ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
 

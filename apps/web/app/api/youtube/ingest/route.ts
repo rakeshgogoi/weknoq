@@ -4,7 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@weknoq/db";
-import { searchYouTube, getVideoDetails } from "@/lib/youtube";
+import { searchYouTube, getVideoDetails, fetchChannelData } from "@/lib/youtube";
 import { tagVideo, generateSummary } from "@/lib/tagger";
 import { cacheGet, cacheSet } from "@/lib/cache";
 import { toSlug } from "@/lib/slug";
@@ -127,6 +127,46 @@ export async function POST(req: NextRequest) {
       }
 
       ingestedCount++;
+    }
+
+    // Upsert Creator records and link videos
+    const uniqueChannelIds = [
+      ...new Set(searchResults.map((v) => v.channelId).filter(Boolean)),
+    ] as string[];
+    if (uniqueChannelIds.length > 0) {
+      const channelDataMap = await fetchChannelData(uniqueChannelIds);
+      for (const channelId of uniqueChannelIds) {
+        const ch = channelDataMap.get(channelId);
+        // Fall back to channelName from search results if API didn't return data
+        const fallbackName =
+          searchResults.find((v) => v.channelId === channelId)?.channelName ?? channelId;
+        const creator = await prisma.creator.upsert({
+          where: { channelId },
+          update: {
+            channelName: ch?.title ?? fallbackName,
+            country: ch?.country ?? undefined,
+            subscriberCount: ch?.subscriberCount ?? undefined,
+            thumbnailUrl: ch?.thumbnailUrl ?? undefined,
+            description: ch?.description ?? undefined,
+            totalViewCount: ch?.totalViewCount ?? undefined,
+            updatedAt: new Date(),
+          },
+          create: {
+            channelId,
+            channelName: ch?.title ?? fallbackName,
+            country: ch?.country ?? null,
+            subscriberCount: ch?.subscriberCount ?? null,
+            thumbnailUrl: ch?.thumbnailUrl ?? null,
+            description: ch?.description ?? null,
+            totalViewCount: ch?.totalViewCount ?? null,
+          },
+        });
+        // Link videos with this channelId to the creator
+        await prisma.video.updateMany({
+          where: { channelId, creatorId: null },
+          data: { creatorId: creator.id },
+        });
+      }
     }
 
     // Update topic video count

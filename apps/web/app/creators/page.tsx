@@ -1,25 +1,77 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { prisma } from "@weknoq/db";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { CreatorCard } from "@/components/creator/CreatorCard";
+import { VideoCard } from "@/components/video/VideoCard";
 
-export const revalidate = 3600;
+export const revalidate = 600;
 
-const FEATURED_CHANNELS = [
-  { name: "3Blue1Brown",         slug: "3blue1brown",         emoji: "🔵", topic: "Mathematics",  videos: 130, desc: "Visual, intuitive mathematics — from linear algebra to neural networks." },
-  { name: "freeCodeCamp",        slug: "freecodecamp",        emoji: "🔥", topic: "Programming",  videos: 980, desc: "Comprehensive programming tutorials — Python, JavaScript, databases, and more." },
-  { name: "TED",                 slug: "ted",                 emoji: "🎙️", topic: "Various",      videos: 3200, desc: "Ideas worth spreading — science, technology, design, and the human condition." },
-  { name: "Kurzgesagt",          slug: "kurzgesagt",          emoji: "🐦", topic: "Science",      videos: 190, desc: "Beautifully animated science and philosophy — designed to change how you see the world." },
-  { name: "Khan Academy",        slug: "khan-academy",        emoji: "🎓", topic: "Various",      videos: 8000, desc: "Free world-class education for anyone, anywhere. Every subject from K-12 through college." },
-  { name: "Veritasium",          slug: "veritasium",          emoji: "⚛️", topic: "Science",      videos: 260, desc: "Derek Muller explores the world's counterintuitive physics and interesting ideas." },
-  { name: "CrashCourse",         slug: "crashcourse",         emoji: "💥", topic: "Various",      videos: 1600, desc: "Fast-paced, entertaining deep dives into history, science, literature, and more." },
-  { name: "MIT OpenCourseWare",  slug: "mit-ocw",             emoji: "🏛️", topic: "Engineering",  videos: 2400, desc: "Complete MIT courses available free — engineering, CS, math, and more." },
-  { name: "Lex Fridman",         slug: "lex-fridman",         emoji: "🤖", topic: "Technology",   videos: 400, desc: "Long-form conversations with scientists, engineers, and thinkers at the frontier." },
-  { name: "The School of Life",  slug: "school-of-life",      emoji: "🦉", topic: "Philosophy",   videos: 460, desc: "Philosophical ideas about life, relationships, and emotional intelligence." },
-  { name: "Two Cents",           slug: "two-cents",           emoji: "💰", topic: "Finance",      videos: 140, desc: "Personal finance, investing, and money skills for real people." },
-  { name: "TED-Ed",              slug: "ted-ed",              emoji: "📚", topic: "Various",      videos: 1800, desc: "Animated lessons on science, math, history, and literature — perfect for all ages." },
-];
+export const metadata: Metadata = {
+  title: "Top Educational Creators | Weknoq",
+  description:
+    "Discover the world's top educational YouTube creators — filtered by country, ranked by subscribers and views.",
+  openGraph: {
+    title: "Top Educational Creators | Weknoq",
+    description:
+      "Discover the world's top educational YouTube creators — filtered by country.",
+  },
+};
 
-export default function CreatorsPage() {
+interface Props {
+  searchParams: Promise<{ country?: string }>;
+}
+
+async function getCreators(country?: string) {
+  return prisma.creator.findMany({
+    where: {
+      isActive: true,
+      ...(country ? { country } : {}),
+    },
+    orderBy: [{ subscriberCount: "desc" }, { channelName: "asc" }],
+    include: { _count: { select: { videos: true } } },
+  });
+}
+
+async function getCountries() {
+  const rows = await prisma.creator.findMany({
+    where: { isActive: true, country: { not: null } },
+    select: { country: true },
+    distinct: ["country"],
+    orderBy: { country: "asc" },
+  });
+  return rows.map((r) => r.country!).filter(Boolean);
+}
+
+async function getTopVideos() {
+  return prisma.video.findMany({
+    where: { isActive: true },
+    orderBy: { viewCount: "desc" },
+    take: 8,
+    include: {
+      topics: { select: { topic: { select: { name: true, slug: true } } } },
+    },
+  });
+}
+
+// Returns a flag emoji from a 2-letter ISO country code
+function countryFlag(code: string): string {
+  const codePoints = [...code.toUpperCase()].map(
+    (c) => 127397 + c.charCodeAt(0)
+  );
+  return String.fromCodePoint(...codePoints);
+}
+
+export default async function CreatorsPage({ searchParams }: Props) {
+  const { country } = await searchParams;
+
+  const [creators, countries, topVideos] = await Promise.all([
+    getCreators(country),
+    getCountries(),
+    getTopVideos(),
+  ]);
+
   return (
     <>
       <Navbar />
@@ -43,39 +95,66 @@ export default function CreatorsPage() {
           </p>
         </div>
 
-        {/* Channels grid */}
-        <div className="px-4 sm:px-8 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-16">
-          {FEATURED_CHANNELS.map((c) => (
-            <Link
-              key={c.slug}
-              href={`/search?q=${encodeURIComponent(c.name)}`}
-              className="group bg-paper/[0.03] border border-paper/[0.07] p-6 hover:border-amber/30 hover:bg-paper/[0.05] transition-all duration-200"
+        {/* Country filter chips */}
+        {countries.length > 0 && (
+          <div className="px-4 sm:px-8 md:px-12 flex flex-wrap gap-2 mb-10">
+            <a
+              href="/creators"
+              className={`px-4 h-8 flex items-center text-[12px] tracking-[1px] uppercase transition-colors ${
+                !country
+                  ? "bg-amber text-ink"
+                  : "border border-white/15 text-paper/50 hover:border-amber/40 hover:text-amber"
+              }`}
             >
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-xl flex-shrink-0 group-hover:border-amber/30 transition-colors">
-                  {c.emoji}
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-display text-[17px] font-bold truncate">{c.name}</h3>
-                  <p className="text-[10px] tracking-[1.5px] uppercase text-amber mt-0.5">
-                    {c.topic}
-                  </p>
-                </div>
-              </div>
-              <p className="text-[13px] text-paper/45 leading-[1.6] mb-4 line-clamp-2">
-                {c.desc}
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] text-paper/30">
-                  {c.videos.toLocaleString()} videos
-                </span>
-                <span className="text-[11px] text-paper/20 group-hover:text-amber transition-colors">
-                  Search →
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+              All
+            </a>
+            {countries.map((c) => (
+              <a
+                key={c}
+                href={`/creators?country=${c}`}
+                className={`px-4 h-8 flex items-center gap-1.5 text-[12px] tracking-[1px] uppercase transition-colors ${
+                  country === c
+                    ? "bg-amber text-ink"
+                    : "border border-white/15 text-paper/50 hover:border-amber/40 hover:text-amber"
+                }`}
+              >
+                <span>{countryFlag(c)}</span>
+                <span>{c}</span>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* Creator grid */}
+        {creators.length === 0 ? (
+          <div className="px-4 sm:px-8 md:px-12 text-center py-24 text-paper/30">
+            <p className="font-display text-2xl mb-2">No creators yet</p>
+            <p className="text-sm">
+              Creators are added automatically when videos are ingested.
+            </p>
+          </div>
+        ) : (
+          <div className="px-4 sm:px-8 md:px-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-20">
+            {creators.map((creator) => (
+              <CreatorCard key={creator.id} creator={creator} />
+            ))}
+          </div>
+        )}
+
+        {/* Top Videos section */}
+        {topVideos.length > 0 && (
+          <section className="px-4 sm:px-8 md:px-12 mb-16">
+            <div className="border-t border-white/10 pt-14 mb-10">
+              <p className="label mb-3">Most Watched</p>
+              <h2 className="font-display text-3xl font-bold">Top Videos</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {topVideos.map((video) => (
+                <VideoCard key={video.id} video={video} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Are you a creator? */}
         <div className="px-4 sm:px-8 md:px-12">
