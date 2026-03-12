@@ -23,6 +23,7 @@
     "db:studio": "cd packages/db && npx prisma studio",
     "db:generate": "cd packages/db && npx prisma generate",
     "db:seed": "cd packages/db && npm run db:seed",
+    "ingest:videos": "npm --workspace @weknoq/web run ingest:videos",
     "postinstall": "npm --workspace packages/db run db:generate"
   },
   "devDependencies": {
