@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans, DM_Mono } from "next/font/google";
+import Script from "next/script";
 import { Providers } from "@/components/layout/Providers";
 import "./globals.css";
 
@@ -44,6 +45,20 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${dmSans.variable} ${dmMono.variable}`}
     >
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-QEEB7XP02V"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-QEEB7XP02V');
+          `}
+        </Script>
+      </head>
       <body className="bg-ink text-paper font-sans antialiased">
         <Providers>{children}</Providers>
       </body>
