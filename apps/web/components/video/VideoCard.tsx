@@ -25,7 +25,7 @@ export function VideoCard({ video, size = "md" }: VideoCardProps) {
 
   return (
     <Link
-      href={`/video/${video.id}`}
+      href={`/videos/${video.slug ?? video.platformId}`}
       className="group flex flex-col bg-white/[0.03] border border-white/[0.07] overflow-hidden hover:border-amber/30 transition-all duration-300"
     >
       {/* Thumbnail */}

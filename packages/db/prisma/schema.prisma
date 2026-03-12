@@ -148,6 +148,7 @@ model Video {
   sourceUrl       String          // Original URL
   embedUrl        String?         // Embed-safe URL
   // Content
+  slug            String?         @unique  // SEO-friendly URL slug, e.g. "how-to-cook-pasta"
   title           String
   description     String?         @db.Text
   thumbnailUrl    String?

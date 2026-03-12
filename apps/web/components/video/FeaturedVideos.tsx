@@ -44,7 +44,7 @@ function FeatCard({
 
   return (
     <Link
-      href={`/video/${video.id}`}
+      href={`/videos/${video.slug ?? video.platformId}`}
       className={`group bg-paper/[0.04] border border-paper/[0.07] overflow-hidden cursor-pointer transition-all duration-300 hover:border-amber/30 relative flex flex-col ${
         large ? "row-span-2" : ""
       }`}
