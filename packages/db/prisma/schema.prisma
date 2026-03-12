@@ -120,6 +120,28 @@ model Tag {
 }
 
 // ─────────────────────────────────────────────
+// CREATORS
+// ─────────────────────────────────────────────
+
+model Creator {
+  id              String   @id @default(cuid())
+  channelId       String   @unique  // YouTube channel ID
+  channelName     String
+  country         String?           // ISO-3166-1 alpha-2, e.g. "US", "IN"
+  subscriberCount Int?
+  thumbnailUrl    String?
+  description     String?  @db.Text
+  totalViewCount  BigInt?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  videos          Video[]
+
+  @@map("creators")
+}
+
+// ─────────────────────────────────────────────
 // VIDEOS
 // ─────────────────────────────────────────────
 
@@ -154,6 +176,7 @@ model Video {
   thumbnailUrl    String?
   channelName     String?
   channelId       String?
+  creatorId       String?
   // AI / rule-based enrichment
   aiSummary       String?         @db.Text   // "What you'll learn" blurb
   difficulty      DifficultyLevel?
@@ -170,6 +193,7 @@ model Video {
   updatedAt       DateTime @updatedAt
 
   // Relations
+  creator     Creator?        @relation(fields: [creatorId], references: [id])
   topics      VideoTopic[]
   subtopics   VideoSubtopic[]
   tags        VideoTag[]
