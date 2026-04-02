@@ -24,7 +24,8 @@ export async function GET(req: NextRequest) {
 
   try {
     // Build Prisma where clause dynamically
-    const where: any = { isActive: true };
+    // Exclude videos with no thumbnail — these are typically private or login-required
+    const where: any = { isActive: true, thumbnailUrl: { not: null } };
 
     if (q) {
       where.OR = [
