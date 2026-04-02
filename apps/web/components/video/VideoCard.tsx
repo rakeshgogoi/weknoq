@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { formatDuration } from "@/lib/youtube";
 import type { Video, Topic } from "@weknoq/db";
 
@@ -19,6 +22,11 @@ const DIFFICULTY_STYLES = {
 };
 
 export function VideoCard({ video, size = "md" }: VideoCardProps) {
+  const [thumbError, setThumbError] = useState(false);
+
+  // Hide cards where the thumbnail URL is broken (private/unavailable videos)
+  if (thumbError) return null;
+
   const duration = video.durationSeconds
     ? formatDuration(video.durationSeconds)
     : null;
@@ -37,6 +45,7 @@ export function VideoCard({ video, size = "md" }: VideoCardProps) {
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            onError={() => setThumbError(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl bg-gradient-to-br from-slate to-ink">

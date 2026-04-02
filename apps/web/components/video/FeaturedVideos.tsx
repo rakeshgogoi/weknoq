@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import type { Video, Topic } from "@weknoq/db";
 
 type VideoWithTopics = Video & {
@@ -38,6 +41,10 @@ function FeatCard({
   video: VideoWithTopics;
   large?: boolean;
 }) {
+  const [thumbError, setThumbError] = useState(false);
+
+  if (thumbError) return null;
+
   const duration = video.durationSeconds ? formatSeconds(video.durationSeconds) : null;
   const platform = PLATFORM_LABELS[video.platform] ?? video.platform;
   const topic = video.topics[0]?.topic;
@@ -63,6 +70,7 @@ function FeatCard({
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 50vw"
+            onError={() => setThumbError(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate to-ink text-5xl">
