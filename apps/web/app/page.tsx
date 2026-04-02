@@ -21,7 +21,7 @@ async function getHomeData() {
         take: 8,
       }),
       prisma.video.findMany({
-        where: { isFeatured: true, isActive: true },
+        where: { isFeatured: true, isActive: true, thumbnailUrl: { not: null } },
         take: 5,
         include: {
           topics: { select: { topic: { select: { name: true, slug: true } } } },
