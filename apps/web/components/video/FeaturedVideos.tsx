@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { VideoThumbnailPlaceholder } from "@/components/video/VideoThumbnailPlaceholder";
 import type { Video, Topic } from "@weknoq/db";
 
 type VideoWithTopics = Video & {
@@ -73,9 +74,7 @@ function FeatCard({
             onError={() => setThumbError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate to-ink text-5xl">
-            📺
-          </div>
+          <VideoThumbnailPlaceholder />
         )}
         {/* Play overlay */}
         <div className="absolute inset-0 bg-ink/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

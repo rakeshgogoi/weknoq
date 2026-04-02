@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { formatDuration } from "@/lib/youtube";
+import { VideoThumbnailPlaceholder } from "@/components/video/VideoThumbnailPlaceholder";
 import type { Video, Topic } from "@weknoq/db";
 
 interface VideoWithTopics extends Video {
@@ -48,9 +49,7 @@ export function VideoCard({ video, size = "md" }: VideoCardProps) {
             onError={() => setThumbError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-4xl bg-gradient-to-br from-slate to-ink">
-            📺
-          </div>
+          <VideoThumbnailPlaceholder />
         )}
 
         {/* Play overlay */}
