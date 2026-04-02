@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const SUGGESTIONS = [
   { emoji: "🐍", label: "Learn Python" },
@@ -13,9 +13,60 @@ const SUGGESTIONS = [
   { emoji: "🧬", label: "Genetics" },
 ];
 
+const PLACEHOLDERS = [
+  "Search any topic — Python, Black Holes, Stoicism…",
+  "Try: Introduction to Machine Learning",
+  "Try: History of Ancient Rome",
+  "Try: How does CRISPR work?",
+  "Try: Quantum mechanics for beginners",
+  "Try: Personal finance fundamentals",
+  "Try: Music theory from scratch",
+];
+
 export function SearchSection() {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [placeholderIdx, setPlaceholderIdx] = useState(0);
+  const [displayedPlaceholder, setDisplayedPlaceholder] = useState("");
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cycle through placeholders with a typewriter-erase effect
+  useEffect(() => {
+    let charIdx = 0;
+    let erasing = false;
+    const target = PLACEHOLDERS[placeholderIdx];
+
+    const tick = () => {
+      if (!erasing) {
+        if (charIdx <= target.length) {
+          setDisplayedPlaceholder(target.slice(0, charIdx));
+          charIdx++;
+          timeoutRef.current = setTimeout(tick, 40);
+        } else {
+          // Pause before erasing
+          timeoutRef.current = setTimeout(() => {
+            erasing = true;
+            tick();
+          }, 2200);
+        }
+      } else {
+        if (charIdx > 0) {
+          charIdx--;
+          setDisplayedPlaceholder(target.slice(0, charIdx));
+          timeoutRef.current = setTimeout(tick, 20);
+        } else {
+          setPlaceholderIdx((i) => (i + 1) % PLACEHOLDERS.length);
+        }
+      }
+    };
+
+    timeoutRef.current = setTimeout(tick, 300);
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [placeholderIdx]);
 
   const handleSearch = (q: string) => {
     const term = q.trim();
@@ -51,7 +102,7 @@ export function SearchSection() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch(query)}
-          placeholder="Search any topic — Python, Black Holes, Stoicism, Jazz…"
+          placeholder={displayedPlaceholder || PLACEHOLDERS[0]}
           className="flex-1 bg-transparent border-none px-6 py-[18px] text-paper text-[15px] outline-none placeholder:text-paper/30"
         />
         <button

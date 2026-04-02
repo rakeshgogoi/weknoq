@@ -30,10 +30,19 @@ export function FeaturesStrip() {
       {FEATURES.map((f, i) => (
         <div
           key={f.name}
-          className={`px-9 py-10 ${i < FEATURES.length - 1 ? "border-r border-paper/[0.06]" : ""}`}
+          className={`group px-9 py-10 transition-all duration-300 hover:bg-paper/[0.03] relative overflow-hidden ${
+            i < FEATURES.length - 1 ? "border-r border-paper/[0.06]" : ""
+          }`}
         >
-          <div className="text-[28px] mb-3.5">{f.icon}</div>
-          <p className="text-[15px] font-medium mb-2">{f.name}</p>
+          {/* Bottom accent line on hover */}
+          <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-amber scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left" />
+
+          <div className="text-[28px] mb-3.5 transition-transform duration-300 group-hover:scale-110 inline-block">
+            {f.icon}
+          </div>
+          <p className="text-[15px] font-medium mb-2 group-hover:text-amber transition-colors duration-300">
+            {f.name}
+          </p>
           <p className="text-[13px] text-paper/40 leading-[1.6]">{f.desc}</p>
         </div>
       ))}

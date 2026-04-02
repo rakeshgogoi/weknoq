@@ -1,46 +1,110 @@
 import Link from "next/link";
+import Image from "next/image";
 
-const HERO_VIDEOS = [
+const PLATFORM_LABELS: Record<string, string> = {
+  YOUTUBE:      "YouTube",
+  VIMEO:        "Vimeo",
+  TED:          "TED",
+  MIT_OCW:      "MIT OCW",
+  KHAN_ACADEMY: "Khan Academy",
+  COURSERA:     "Coursera",
+  EDX:          "edX",
+  OTHER:        "Video",
+};
+
+const DIFFICULTY_COLORS: Record<string, string> = {
+  BEGINNER:     "bg-sage/20 text-sage",
+  INTERMEDIATE: "bg-amber/20 text-amber",
+  ADVANCED:     "bg-rust/20 text-rust",
+};
+
+const ANIM_CLASSES = [
+  "animate-fade-slide-1",
+  "animate-fade-slide-2",
+  "animate-fade-slide-3",
+];
+
+type HeroVideo = {
+  id: string;
+  thumbnailUrl: string;
+  title: string;
+  platform: string;
+  difficulty?: string | null;
+  durationSeconds?: number | null;
+  topics: { topic: { name: string } }[];
+};
+
+function formatSeconds(s: number): string {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (h > 0)
+    return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  return `${m}:${String(sec).padStart(2, "0")}`;
+}
+
+// Fallback mock cards when no real videos are available
+const MOCK_VIDEOS: HeroVideo[] = [
   {
-    gradient: "linear-gradient(135deg,#1a2744,#2a4a7f)",
-    emoji: "💻",
-    source: "YouTube · MIT OCW",
+    id: "mock-1",
+    thumbnailUrl: "",
     title: "Introduction to Algorithms — Lecture 1",
-    tags: [
-      { label: "Featured", amber: true },
-      { label: "Beginner", amber: false },
-      { label: "1h 22m", amber: false },
-    ],
-    featured: true,
-    animClass: "animate-fade-slide-1",
+    platform: "MIT_OCW",
+    difficulty: "BEGINNER",
+    durationSeconds: 4920,
+    topics: [{ topic: { name: "Programming" } }],
   },
   {
-    gradient: "linear-gradient(135deg,#2b1a0d,#7a4010)",
-    emoji: "🧠",
-    source: "TED · Philosophy",
+    id: "mock-2",
+    thumbnailUrl: "",
     title: "The philosophy of time management",
-    tags: [
-      { label: "Intermediate", amber: false },
-      { label: "18m", amber: false },
-    ],
-    featured: false,
-    animClass: "animate-fade-slide-2",
+    platform: "TED",
+    difficulty: "INTERMEDIATE",
+    durationSeconds: 1080,
+    topics: [{ topic: { name: "Philosophy" } }],
   },
   {
-    gradient: "linear-gradient(135deg,#0d2b1a,#1a5c35)",
-    emoji: "🔬",
-    source: "Vimeo · Science",
+    id: "mock-3",
+    thumbnailUrl: "",
     title: "How CRISPR is changing medicine forever",
-    tags: [
-      { label: "Advanced", amber: false },
-      { label: "45m", amber: false },
-    ],
-    featured: false,
-    animClass: "animate-fade-slide-3",
+    platform: "VIMEO",
+    difficulty: "ADVANCED",
+    durationSeconds: 2700,
+    topics: [{ topic: { name: "Science" } }],
   },
 ];
 
-export function HeroSection() {
+const MOCK_GRADIENTS = [
+  "linear-gradient(135deg,#1a2744,#2a4a7f)",
+  "linear-gradient(135deg,#2b1a0d,#7a4010)",
+  "linear-gradient(135deg,#0d2b1a,#1a5c35)",
+];
+
+export function HeroSection({
+  previewVideos = [],
+  videoCount = 0,
+  topicCount = 0,
+}: {
+  previewVideos?: HeroVideo[];
+  videoCount?: number;
+  topicCount?: number;
+}) {
+  const displayVideos =
+    previewVideos.length >= 3 ? previewVideos.slice(0, 3) : MOCK_VIDEOS;
+  const useReal = previewVideos.length >= 3;
+
+  const stats = [
+    {
+      num: videoCount > 0 ? `${videoCount.toLocaleString()}+` : "120K+",
+      label: "Videos Curated",
+    },
+    {
+      num: topicCount > 0 ? String(topicCount) : "48",
+      label: "Topic Categories",
+    },
+    { num: "12", label: "Platforms" },
+  ];
+
   return (
     <section className="min-h-screen grid grid-cols-2 items-center px-12 pt-24 pb-16 relative overflow-hidden">
       {/* Background radial gradients */}
@@ -109,11 +173,7 @@ export function HeroSection() {
 
         {/* Stats */}
         <div className="flex gap-9 mt-14 pt-9 border-t border-white/10">
-          {[
-            { num: "120K+", label: "Videos Curated" },
-            { num: "48",    label: "Topic Categories" },
-            { num: "12",    label: "Platforms" },
-          ].map(({ num, label }) => (
+          {stats.map(({ num, label }) => (
             <div key={label}>
               <span className="font-display text-[28px] font-bold text-amber block">
                 {num}
@@ -128,32 +188,46 @@ export function HeroSection() {
 
       {/* Right column — video preview cards */}
       <div className="relative z-10 flex flex-col gap-4">
-        {HERO_VIDEOS.map((v) => (
-          <div
-            key={v.title}
+        {displayVideos.map((v, i) => (
+          <Link
+            key={v.id}
+            href={useReal ? `/video/${v.id}` : "/explore"}
             className={`group relative flex gap-4 items-start p-5 cursor-pointer transition-all duration-300
               border overflow-hidden
-              ${v.featured
+              ${i === 0
                 ? "border-amber/30 bg-amber/[0.05]"
                 : "border-paper/[0.08] bg-paper/[0.04] hover:bg-paper/[0.07]"
               }
-              ${v.animClass}
+              ${ANIM_CLASSES[i]}
               hover:translate-x-1`}
           >
             {/* Left accent bar */}
             <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center" />
-            {v.featured && (
+            {i === 0 && (
               <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber" />
             )}
 
             {/* Thumbnail */}
-            <div className="relative w-22 h-14 flex-shrink-0 overflow-hidden" style={{ width: 88, height: 58 }}>
-              <div
-                className="w-full h-full flex items-center justify-center text-xl"
-                style={{ background: v.gradient }}
-              >
-                {v.emoji}
-              </div>
+            <div
+              className="relative flex-shrink-0 overflow-hidden"
+              style={{ width: 88, height: 58 }}
+            >
+              {useReal && v.thumbnailUrl ? (
+                <Image
+                  src={v.thumbnailUrl}
+                  alt={v.title}
+                  fill
+                  className="object-cover"
+                  sizes="88px"
+                />
+              ) : (
+                <div
+                  className="w-full h-full flex items-center justify-center text-xl"
+                  style={{ background: MOCK_GRADIENTS[i] }}
+                >
+                  {["💻", "🧠", "🔬"][i]}
+                </div>
+              )}
               {/* Play overlay */}
               <div className="absolute inset-0 bg-ink/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <div
@@ -168,28 +242,36 @@ export function HeroSection() {
               <div className="flex items-center gap-1.5 mb-1.5">
                 <div className="w-1 h-1 rounded-full bg-amber flex-shrink-0" />
                 <span className="text-[10px] tracking-[1.5px] uppercase text-amber font-medium">
-                  {v.source}
+                  {PLATFORM_LABELS[v.platform] ?? v.platform}
+                  {v.topics[0]?.topic.name ? ` · ${v.topics[0].topic.name}` : ""}
                 </span>
               </div>
               <p className="text-[13px] font-medium text-paper leading-[1.4] mb-1.5 truncate">
                 {v.title}
               </p>
               <div className="flex gap-1.5 flex-wrap">
-                {v.tags.map((tag) => (
+                {i === 0 && (
+                  <span className="text-[10px] px-2 py-0.5 tracking-[0.5px] bg-amber/[0.12] text-amber">
+                    Featured
+                  </span>
+                )}
+                {v.difficulty && (
                   <span
-                    key={tag.label}
                     className={`text-[10px] px-2 py-0.5 tracking-[0.5px] ${
-                      tag.amber
-                        ? "bg-amber/[0.12] text-amber"
-                        : "bg-paper/[0.07] text-paper/50"
+                      DIFFICULTY_COLORS[v.difficulty] ?? "bg-paper/[0.07] text-paper/50"
                     }`}
                   >
-                    {tag.label}
+                    {v.difficulty.charAt(0) + v.difficulty.slice(1).toLowerCase()}
                   </span>
-                ))}
+                )}
+                {v.durationSeconds && (
+                  <span className="text-[10px] px-2 py-0.5 bg-paper/[0.07] text-paper/50">
+                    {formatSeconds(v.durationSeconds)}
+                  </span>
+                )}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>
